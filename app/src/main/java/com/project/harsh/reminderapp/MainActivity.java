@@ -29,7 +29,8 @@ import java.util.Date;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
 
-    EditText date, name;
+    EditText name;
+    TextView date;
     Button setbtn;
     Calendar c;
     String date_time = "";
@@ -45,9 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
     PendingIntent pendingIntent;
     AlarmManager alarmManager;
+    Calendar calendar = Calendar.getInstance();
 
-    private static int timeHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-    private static int timeMinute = Calendar.getInstance().get(Calendar.MINUTE);
+//    private static int timeHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+//    private static int timeMinute = Calendar.getInstance().get(Calendar.MINUTE);
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
 
-        date = (EditText) findViewById(R.id.gettdate);
+        date = (TextView) findViewById(R.id.gettdate);
         name = (EditText) findViewById(R.id.getname);
         setbtn = (Button)findViewById(R.id.setbtn);
 
@@ -66,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
 
+
+        calendar.set(Calendar.MONTH, mMonth);
+        calendar.set(Calendar.YEAR, mYear);
+        calendar.set(Calendar.DAY_OF_MONTH, mDay);
+
+        calendar.set(Calendar.HOUR_OF_DAY, mHour);
+        calendar.set(Calendar.MINUTE, mMinute);
         isUpdate=getIntent().getExtras().getBoolean("update");
         if(isUpdate)
         {
@@ -126,14 +135,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startAlert() {
-        int i = Integer.parseInt(date.getText().toString());
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this.getApplicationContext(), 234324243, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (i * 1000), pendingIntent);
-        Toast.makeText(this, "Alarm set in " + i + " seconds",Toast.LENGTH_LONG).show();
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Toast.makeText(this, "Alarm set in " + calendar.getTimeInMillis() + " milliseconds",Toast.LENGTH_LONG).show();
     }
 
 
@@ -201,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         mMinute = minute;
 
                         date.setText(date_time + " " + hourOfDay + ":" + minute);
+//                        date = maindate;
 //                        setAlarm();
                     }
                 }, mHour, mMinute, false);

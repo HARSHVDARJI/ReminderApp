@@ -1,5 +1,6 @@
 package com.project.harsh.reminderapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Ringtone;
@@ -12,7 +13,7 @@ import android.widget.Toast;
  * Created by harsh on 9/3/17.
  */
 
-public class AlarmReceiver extends WakefulBroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 //        MainActivity..setText("Enough Rest. Do Work Now!");
