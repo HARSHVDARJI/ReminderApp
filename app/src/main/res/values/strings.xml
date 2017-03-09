@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ReminderApp</string>
+    <string name="app_name">Reminder</string>
 
                                     <!--Reference By-->
     <!--http://androidsolution4u.blogspot.in/2013/09/android-populate-listview-from-sqlite.html-->
