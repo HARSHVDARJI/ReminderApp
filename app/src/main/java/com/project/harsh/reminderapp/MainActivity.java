@@ -1,6 +1,8 @@
 package com.project.harsh.reminderapp;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import java.util.Date;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
 
     EditText date, name;
@@ -38,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     private DbHelper mHelper;
     private SQLiteDatabase dataBase;
 
+    PendingIntent pendingIntent;
+    AlarmManager alarmManager;
+
+    private static int timeHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+    private static int timeMinute = Calendar.getInstance().get(Calendar.MINUTE);
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         date = (EditText) findViewById(R.id.gettdate);
         name = (EditText) findViewById(R.id.getname);
         setbtn = (Button)findViewById(R.id.setbtn);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
 
         isUpdate=getIntent().getExtras().getBoolean("update");
         if(isUpdate)
@@ -91,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                     alertBuilder.create().show();
                 }
-
+                startAlert();
             }
 //                String fname,lname;
 //
@@ -106,6 +119,18 @@ public class MainActivity extends AppCompatActivity {
 
         mHelper=new DbHelper(this);
     }
+
+    private void startAlert() {
+        int i = Integer.parseInt(date.getText().toString());
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this.getApplicationContext(), 234324243, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                + (i * 1000), pendingIntent);
+        Toast.makeText(this, "Alarm set in " + i + " seconds",Toast.LENGTH_LONG).show();
+    }
+
 
     private void saveData() {
         dataBase=mHelper.getWritableDatabase();
@@ -171,8 +196,16 @@ public class MainActivity extends AppCompatActivity {
                         mMinute = minute;
 
                         date.setText(date_time + " " + hourOfDay + ":" + minute);
+//                        setAlarm();
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();
     }
+
+//    private void setAlarm() {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, timeHour);
+//        calendar.set(Calendar.MINUTE, timeMinute);
+//        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//    }
 }
