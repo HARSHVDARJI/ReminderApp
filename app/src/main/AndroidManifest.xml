@@ -12,7 +12,7 @@
         <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".DatePickerExample">
+        <activity android:name=".DisplayActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
